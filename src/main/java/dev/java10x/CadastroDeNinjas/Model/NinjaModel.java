@@ -1,12 +1,9 @@
-package dev.java10x.CadastroDeNinjas.Ninjas.Controller.Service;
+package dev.java10x.CadastroDeNinjas.Model;
 
-import dev.java10x.CadastroDeNinjas.Missoes.Controller.Service.MissoesModel;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 // Entity ele transforma uma classe em uma entidade do BD
 @Entity
