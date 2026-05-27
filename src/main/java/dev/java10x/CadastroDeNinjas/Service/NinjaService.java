@@ -90,12 +90,12 @@ public class NinjaService {
         return null;
     }
 
-    public boolean deletarNinja(Long id) {
+    public void deletarNinja(Long id){
 
-        if (ninjaRepository.existsById(id)){
-            ninjaRepository.deleteById(id);
-            return true;
+        if(!ninjaRepository.existsById(id)){
+            throw new RuntimeException("Ninja com ID " + id + " não encontrado");
         }
-        return false;
+
+        ninjaRepository.deleteById(id);
     }
 }
