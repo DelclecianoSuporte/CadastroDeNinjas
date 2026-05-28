@@ -30,24 +30,19 @@ public class MissoesControler {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MissaoDTO> listarMissoesPorId(@PathVariable @Min(1) Long id){
+    public ResponseEntity<MissaoDTO> listarMissoesPorId(@PathVariable Long id){
+
         MissaoDTO missaoDTO = missaoService.listarMissaoPorId(id);
 
-        if(missaoDTO != null){
-            return ResponseEntity.ok(missaoDTO);
-        }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(missaoDTO);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<MissaoDTO> atualizarMissao(@PathVariable Long id, @Valid @RequestBody MissaoDTO missaoDTO){
-         MissaoDTO missaoAtualizada = missaoService.atualizarMissao(id, missaoDTO);
 
-        if(missaoAtualizada != null){
-            return ResponseEntity.ok(missaoAtualizada);
-        }
+        MissaoDTO missaoAtualizada = missaoService.atualizarMissao(id, missaoDTO);
 
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(missaoAtualizada);
     }
 
     @DeleteMapping("/{id}")

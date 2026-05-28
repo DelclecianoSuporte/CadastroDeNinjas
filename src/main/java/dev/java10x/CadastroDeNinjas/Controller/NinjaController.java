@@ -33,24 +33,24 @@ public class NinjaController {
 
     @GetMapping
     public Page<NinjaDTO> listarNinjas(Pageable pageable){
+
         return ninjaService.listarNinjas(pageable);
     }
 
+
     @GetMapping("/{id}")
-    public ResponseEntity<NinjaDTO> listarNinjasPorId(@PathVariable @Min(1) Long id){
+    public ResponseEntity<NinjaDTO> listarNinjasPorId(@PathVariable Long id){
+
         NinjaDTO ninjaDTO = ninjaService.listarNinjasPorId(id);
 
-        if(ninjaDTO != null){
-            return ResponseEntity.ok(ninjaDTO);
-        }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(ninjaDTO);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<NinjaDTO> atualizarNinja(@PathVariable Long id, @Valid @RequestBody NinjaDTO ninjaDTO){
         NinjaDTO ninjaAtualizado = ninjaService.atualizarNinja(id, ninjaDTO);
 
-        if(ninjaAtualizado != null){
+        if (ninjaAtualizado != null){
             return ResponseEntity.ok(ninjaAtualizado);
         }
 

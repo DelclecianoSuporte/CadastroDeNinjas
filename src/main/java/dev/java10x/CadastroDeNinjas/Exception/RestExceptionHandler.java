@@ -33,4 +33,20 @@ public class RestExceptionHandler {
 
         return ResponseEntity.badRequest().body(listaDeErros);
     }
+
+    @ExceptionHandler(NinjaNaoEncontradoException.class)
+    public ResponseEntity<Map<String, String>> handleNinjaNaoEncontrado(NinjaNaoEncontradoException ex){
+
+        Map<String, String> erro = new HashMap<>();
+
+        erro.put("erro", ex.getMessage());
+
+        return ResponseEntity.status(404).body(erro);
+    }
+
+    @ExceptionHandler(MissaoNaoEncontradaException.class)
+    public ResponseEntity<String> handleMissaoNaoEncontrada(MissaoNaoEncontradaException ex){
+
+        return ResponseEntity.status(404).body(ex.getMessage());
+    }
 }

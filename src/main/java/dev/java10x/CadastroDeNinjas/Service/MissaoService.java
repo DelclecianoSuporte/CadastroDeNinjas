@@ -2,6 +2,7 @@ package dev.java10x.CadastroDeNinjas.Service;
 
 import dev.java10x.CadastroDeNinjas.DTO.MissaoDTO;
 import dev.java10x.CadastroDeNinjas.DTO.NinjaDTO;
+import dev.java10x.CadastroDeNinjas.Exception.MissaoNaoEncontradaException;
 import dev.java10x.CadastroDeNinjas.Model.MissaoModel;
 import dev.java10x.CadastroDeNinjas.Model.NinjaModel;
 import dev.java10x.CadastroDeNinjas.Repository.MissaoRepository;
@@ -48,43 +49,40 @@ public class MissaoService {
 
     public MissaoDTO listarMissaoPorId(Long id){
 
-        MissaoModel missao = missaoRepository.findById(id).orElse(null);
+        MissaoModel missao = missaoRepository.findById(id)
+                .orElseThrow(() ->
+                        new MissaoNaoEncontradaException("Missão com ID " + id + " não encontrada"));
 
-        if (missao != null){
-            MissaoDTO dto = new MissaoDTO();
-            dto.setNome(missao.getNome());
-            dto.setDificuldade(missao.getDificuldade());
+        MissaoDTO dto = new MissaoDTO();
 
-            return dto;
-        }
+        dto.setNome(missao.getNome());
+        dto.setDificuldade(missao.getDificuldade());
 
-        return null;
+        return dto;
     }
 
     public MissaoDTO atualizarMissao(Long id, MissaoDTO missaoDTO){
 
-        MissaoModel missaoExistente = missaoRepository.findById(id).orElse(null);
+        MissaoModel missaoExistente = missaoRepository.findById(id).orElseThrow(() ->
+                new MissaoNaoEncontradaException("Missão com ID " + id + " não encontrada"));
 
-        if (missaoExistente != null){
-            missaoExistente.setNome(missaoDTO.getNome());
-            missaoExistente.setDificuldade(missaoDTO.getDificuldade());
+        missaoExistente.setNome(missaoDTO.getNome());
+        missaoExistente.setDificuldade(missaoDTO.getDificuldade());
 
-            MissaoModel missaoSalva = missaoRepository.save(missaoExistente);
+        MissaoModel missaoSalva = missaoRepository.save(missaoExistente);
 
-            MissaoDTO dto = new MissaoDTO();
-            dto.setNome(missaoSalva.getNome());
-            dto.setDificuldade(missaoSalva.getDificuldade());
+        MissaoDTO dto = new MissaoDTO();
 
-            return dto;
-        }
+        dto.setNome(missaoSalva.getNome());
+        dto.setDificuldade(missaoSalva.getDificuldade());
 
-        return null;
+        return dto;
     }
 
     public void deletarMissao(Long id){
 
         if(!missaoRepository.existsById(id)){
-            throw new RuntimeException("Missao com ID " + id + " não encontrada");
+            throw new MissaoNaoEncontradaException("Missão com ID " + id + " não encontrada");
         }
 
         missaoRepository.deleteById(id);
