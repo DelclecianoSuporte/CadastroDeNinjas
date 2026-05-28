@@ -14,8 +14,12 @@ public class NinjaDTO {
 
     @NotBlank(message = "O nome não pode estar vazio")
     private String nome;
+
     @Email(message = "Email inválido")
     private String email;
+
     @Min(value = 1, message = "A idade mínima é 1")
     private int idade;
+
+    private Long missaoId;
 }

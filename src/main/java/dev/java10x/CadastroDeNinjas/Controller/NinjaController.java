@@ -5,6 +5,8 @@ import dev.java10x.CadastroDeNinjas.Service.NinjaService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,8 +32,8 @@ public class NinjaController {
     }
 
     @GetMapping
-    public List<NinjaDTO> listarNinjas(){
-        return ninjaService.listarNinjas();
+    public Page<NinjaDTO> listarNinjas(Pageable pageable){
+        return ninjaService.listarNinjas(pageable);
     }
 
     @GetMapping("/{id}")

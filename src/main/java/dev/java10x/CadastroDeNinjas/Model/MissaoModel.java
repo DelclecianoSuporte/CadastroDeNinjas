@@ -12,7 +12,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MissoesModel {
+public class MissaoModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY )
@@ -23,6 +23,6 @@ public class MissoesModel {
     private String dificuldade;
 
     //@OneToMany - Uma missão pode ter varios ninjas
-    @OneToMany(mappedBy = "missoes")
-    private List<NinjaModel> ninja;
+    @OneToMany(mappedBy = "missao")
+    private List<NinjaModel> ninjas;
 }
