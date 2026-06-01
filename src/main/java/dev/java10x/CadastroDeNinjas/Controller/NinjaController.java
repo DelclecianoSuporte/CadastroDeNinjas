@@ -37,7 +37,6 @@ public class NinjaController {
         return ninjaService.listarNinjas(pageable);
     }
 
-
     @GetMapping("/{id}")
     public ResponseEntity<NinjaDTO> listarNinjasPorId(@PathVariable Long id){
 
@@ -63,5 +62,22 @@ public class NinjaController {
         ninjaService.deletarNinja(id);
 
         return ResponseEntity.ok("Ninja deletado com sucesso");
+    }
+
+    @GetMapping("/buscar")
+    public ResponseEntity<List<NinjaDTO>> buscarPorNome(
+            @RequestParam String nome){
+
+        return ResponseEntity.ok(ninjaService.buscarPorNome(nome));
+    }
+
+    @GetMapping("/buscarContem")
+    public ResponseEntity<List<NinjaDTO>> buscarPorTrecho(@RequestParam String trecho){
+        return ResponseEntity.ok(ninjaService.buscarPorTrecho(trecho));
+    }
+
+    @GetMapping("/missao/{missaoId}")
+    public ResponseEntity<List<NinjaDTO>> buscarPorMissao(@PathVariable Long missaoId){
+        return ResponseEntity.ok(ninjaService.buscarNinjaPorMissao(missaoId));
     }
 }

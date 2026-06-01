@@ -2,6 +2,7 @@ package dev.java10x.CadastroDeNinjas.Service;
 
 import dev.java10x.CadastroDeNinjas.DTO.MissaoDTO;
 import dev.java10x.CadastroDeNinjas.DTO.NinjaDTO;
+import dev.java10x.CadastroDeNinjas.Enums.Dificuldade;
 import dev.java10x.CadastroDeNinjas.Exception.MissaoNaoEncontradaException;
 import dev.java10x.CadastroDeNinjas.Model.MissaoModel;
 import dev.java10x.CadastroDeNinjas.Model.NinjaModel;
@@ -10,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class MissaoService {
@@ -86,6 +89,20 @@ public class MissaoService {
         }
 
         missaoRepository.deleteById(id);
+    }
+
+    public List<MissaoDTO> buscaMissaoPorDificuldade(Dificuldade dificuldade){
+
+        List<MissaoModel> missoes = missaoRepository.findByDificuldade(dificuldade);
+
+        return missoes.stream()
+                .map(missao -> {
+                    MissaoDTO dto = new MissaoDTO();
+                    dto.setNome(missao.getNome());
+                    dto.setDificuldade(missao.getDificuldade());
+                    return dto;
+                })
+                .toList();
     }
 
 }

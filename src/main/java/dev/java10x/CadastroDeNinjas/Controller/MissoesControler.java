@@ -1,6 +1,7 @@
 package dev.java10x.CadastroDeNinjas.Controller;
 
 import dev.java10x.CadastroDeNinjas.DTO.MissaoDTO;
+import dev.java10x.CadastroDeNinjas.Enums.Dificuldade;
 import dev.java10x.CadastroDeNinjas.Service.MissaoService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -9,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(("/missoes"))
@@ -51,5 +54,10 @@ public class MissoesControler {
         missaoService.deletarMissao(id);
 
         return ResponseEntity.ok("Missão deletada com sucesso");
+    }
+
+    @GetMapping("/dificuldade")
+    public ResponseEntity<List<MissaoDTO>> buscarPorDificuldade(@RequestParam Dificuldade dificuldade){
+        return ResponseEntity.ok(missaoService.buscaMissaoPorDificuldade(dificuldade));
     }
 }

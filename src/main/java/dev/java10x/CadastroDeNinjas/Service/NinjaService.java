@@ -138,4 +138,69 @@ public class NinjaService {
         }
         ninjaRepository.deleteById(id);
     }
+
+    public List<NinjaDTO> buscarPorNome(String nome){
+
+        List<NinjaModel> ninjas = ninjaRepository.findByNome(nome);
+
+        return ninjas.stream()
+                .map(ninja -> {
+
+                    NinjaDTO dto = new NinjaDTO();
+
+                    dto.setNome(ninja.getNome());
+                    dto.setEmail(ninja.getEmail());
+                    dto.setIdade(ninja.getIdade());
+
+                    if(ninja.getMissao() != null){
+                        dto.setMissaoId(ninja.getMissao().getId());
+                    }
+
+                    return dto;
+                })
+                .toList();
+    }
+
+    public List<NinjaDTO> buscarPorTrecho(String trecho) {
+
+        List<NinjaModel> ninjas = ninjaRepository.findByNomeContainingIgnoreCase(trecho);
+
+        return ninjas.stream()
+                .map(ninja -> {
+                    NinjaDTO dto = new NinjaDTO();
+
+                    dto.setNome(ninja.getNome());
+                    dto.setEmail(ninja.getEmail());
+                    dto.setIdade(ninja.getIdade());
+
+                    if(ninja.getMissao() != null){
+                        dto.setMissaoId(ninja.getMissao().getId());
+                    }
+
+                    return dto;
+                })
+                .toList();
+    }
+
+    public List<NinjaDTO> buscarNinjaPorMissao(Long missaoId){
+
+        List<NinjaModel> ninjas = ninjaRepository.findByMissaoId(missaoId);
+
+        return ninjas.stream()
+                .map(ninja -> {
+
+                    NinjaDTO dto = new NinjaDTO();
+
+                    dto.setNome(ninja.getNome());
+                    dto.setEmail(ninja.getEmail());
+                    dto.setIdade(ninja.getIdade());
+
+                    if(ninja.getMissao() != null){
+                        dto.setMissaoId(ninja.getMissao().getId());
+                    }
+
+                    return dto;
+                })
+                .toList();
+    }
 }

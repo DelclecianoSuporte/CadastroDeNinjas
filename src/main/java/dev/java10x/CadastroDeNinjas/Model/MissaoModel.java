@@ -1,5 +1,6 @@
 package dev.java10x.CadastroDeNinjas.Model;
 
+import dev.java10x.CadastroDeNinjas.Enums.Dificuldade;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,7 +21,8 @@ public class MissaoModel {
 
     private String nome;
 
-    private String dificuldade;
+    @Enumerated(EnumType.STRING)
+    private Dificuldade dificuldade;
 
     //@OneToMany - Uma missão pode ter varios ninjas
     @OneToMany(mappedBy = "missao")
