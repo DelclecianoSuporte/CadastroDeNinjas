@@ -4,6 +4,7 @@ import dev.java10x.CadastroDeNinjas.DTO.MissaoDTO;
 import dev.java10x.CadastroDeNinjas.DTO.NinjaDTO;
 import dev.java10x.CadastroDeNinjas.Enums.Dificuldade;
 import dev.java10x.CadastroDeNinjas.Exception.MissaoNaoEncontradaException;
+import dev.java10x.CadastroDeNinjas.Mapper.MissaoMapper;
 import dev.java10x.CadastroDeNinjas.Model.MissaoModel;
 import dev.java10x.CadastroDeNinjas.Model.NinjaModel;
 import dev.java10x.CadastroDeNinjas.Repository.MissaoRepository;
@@ -20,48 +21,30 @@ public class MissaoService {
     @Autowired
     private MissaoRepository missaoRepository;
 
+    @Autowired
+    private MissaoMapper missaoMapper;
+
     public MissaoDTO criarMissao(MissaoDTO missaoDTO){
 
-        MissaoModel missao = new MissaoModel();
-
-        missao.setNome(missaoDTO.getNome());
-        missao.setDificuldade(missaoDTO.getDificuldade());
+        MissaoModel missao = missaoMapper.toModel(missaoDTO);
 
         MissaoModel missaoSalva = missaoRepository.save(missao);
 
-        return new MissaoDTO(
-                missaoSalva.getNome(),
-                missaoSalva.getDificuldade()
-        );
+        return missaoMapper.toDTO(missaoSalva);
     }
 
     public Page<MissaoDTO> listarNissoes(Pageable pageable){
 
         Page<MissaoModel> missoes = missaoRepository.findAll(pageable);
 
-        return missoes.map(missao -> {
-
-            MissaoDTO dto = new MissaoDTO();
-
-            dto.setNome(missao.getNome());
-            dto.setDificuldade(missao.getDificuldade());
-
-            return dto;
-        });
+        return missoes.map(missaoMapper::toDTO);
     }
 
     public MissaoDTO listarMissaoPorId(Long id){
 
-        MissaoModel missao = missaoRepository.findById(id)
-                .orElseThrow(() ->
-                        new MissaoNaoEncontradaException("Missão com ID " + id + " não encontrada"));
+        MissaoModel missao = missaoRepository.findById(id).orElseThrow(() -> new MissaoNaoEncontradaException("Missão com ID " + id + " não encontrada"));
 
-        MissaoDTO dto = new MissaoDTO();
-
-        dto.setNome(missao.getNome());
-        dto.setDificuldade(missao.getDificuldade());
-
-        return dto;
+        return missaoMapper.toDTO(missao);
     }
 
     public MissaoDTO atualizarMissao(Long id, MissaoDTO missaoDTO){
@@ -74,12 +57,7 @@ public class MissaoService {
 
         MissaoModel missaoSalva = missaoRepository.save(missaoExistente);
 
-        MissaoDTO dto = new MissaoDTO();
-
-        dto.setNome(missaoSalva.getNome());
-        dto.setDificuldade(missaoSalva.getDificuldade());
-
-        return dto;
+        return missaoMapper.toDTO(missaoSalva);
     }
 
     public void deletarMissao(Long id){
@@ -95,14 +73,7 @@ public class MissaoService {
 
         List<MissaoModel> missoes = missaoRepository.findByDificuldade(dificuldade);
 
-        return missoes.stream()
-                .map(missao -> {
-                    MissaoDTO dto = new MissaoDTO();
-                    dto.setNome(missao.getNome());
-                    dto.setDificuldade(missao.getDificuldade());
-                    return dto;
-                })
-                .toList();
+        return missoes.stream().map(missaoMapper::toDTO).toList();
     }
 
 }

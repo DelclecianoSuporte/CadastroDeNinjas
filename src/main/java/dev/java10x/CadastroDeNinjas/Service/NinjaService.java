@@ -3,6 +3,7 @@ package dev.java10x.CadastroDeNinjas.Service;
 import dev.java10x.CadastroDeNinjas.DTO.NinjaDTO;
 import dev.java10x.CadastroDeNinjas.Exception.MissaoNaoEncontradaException;
 import dev.java10x.CadastroDeNinjas.Exception.NinjaNaoEncontradoException;
+import dev.java10x.CadastroDeNinjas.Mapper.NinjaMapper;
 import dev.java10x.CadastroDeNinjas.Model.MissaoModel;
 import dev.java10x.CadastroDeNinjas.Model.NinjaModel;
 import dev.java10x.CadastroDeNinjas.Repository.MissaoRepository;
@@ -20,16 +21,16 @@ public class NinjaService {
 
     @Autowired
     private NinjaRepository ninjaRepository;
+
     @Autowired
     private MissaoRepository missaoRepository;
 
+    @Autowired
+    private NinjaMapper ninjaMapper;
+
     public NinjaDTO criarNinja(NinjaDTO ninjaDTO){
 
-        NinjaModel ninja = new NinjaModel();
-
-        ninja.setNome(ninjaDTO.getNome());
-        ninja.setEmail(ninjaDTO.getEmail());
-        ninja.setIdade(ninjaDTO.getIdade());
+        NinjaModel ninja = ninjaMapper.toModel(ninjaDTO);
 
         // Verifica se o ninja vai ter vinculo com missão
         if(ninjaDTO.getMissaoId() != null){
@@ -58,20 +59,7 @@ public class NinjaService {
 
         Page<NinjaModel> ninjas = ninjaRepository.findAll(pageable);
 
-        return ninjas.map(ninja -> {
-
-            NinjaDTO dto = new NinjaDTO();
-
-            dto.setNome(ninja.getNome());
-            dto.setEmail(ninja.getEmail());
-            dto.setIdade(ninja.getIdade());
-
-            if (ninja.getMissao() != null){
-                dto.setMissaoId(ninja.getMissao().getId());
-            }
-
-            return dto;
-        });
+        return ninjas.map(ninjaMapper::toDTO);
     }
 
     public NinjaDTO listarNinjasPorId(Long id){
@@ -80,17 +68,7 @@ public class NinjaService {
                 .orElseThrow(() ->
                         new NinjaNaoEncontradoException("Ninja com ID " + id + " não encontrado"));
 
-        NinjaDTO dto = new NinjaDTO();
-
-        dto.setNome(ninja.getNome());
-        dto.setEmail(ninja.getEmail());
-        dto.setIdade(ninja.getIdade());
-
-        if (ninja.getMissao() != null){
-            dto.setMissaoId(ninja.getMissao().getId());
-        }
-
-        return dto;
+        return ninjaMapper.toDTO(ninja);
     }
 
     public NinjaDTO atualizarNinja(Long id, NinjaDTO ninjaDTO){
@@ -119,17 +97,7 @@ public class NinjaService {
 
         NinjaModel ninjaSalvo = ninjaRepository.save(ninjaExistente);
 
-        NinjaDTO dto = new NinjaDTO();
-
-        dto.setNome(ninjaSalvo.getNome());
-        dto.setEmail(ninjaSalvo.getEmail());
-        dto.setIdade(ninjaSalvo.getIdade());
-
-        if(ninjaSalvo.getMissao() != null){
-            dto.setMissaoId(ninjaSalvo.getMissao().getId());
-        }
-
-        return dto;
+        return ninjaMapper.toDTO(ninjaSalvo);
     }
 
     public void deletarNinja(Long id){
@@ -143,43 +111,14 @@ public class NinjaService {
 
         List<NinjaModel> ninjas = ninjaRepository.findByNome(nome);
 
-        return ninjas.stream()
-                .map(ninja -> {
-
-                    NinjaDTO dto = new NinjaDTO();
-
-                    dto.setNome(ninja.getNome());
-                    dto.setEmail(ninja.getEmail());
-                    dto.setIdade(ninja.getIdade());
-
-                    if(ninja.getMissao() != null){
-                        dto.setMissaoId(ninja.getMissao().getId());
-                    }
-
-                    return dto;
-                })
-                .toList();
+        return ninjas.stream().map(ninjaMapper::toDTO).toList();
     }
 
     public List<NinjaDTO> buscarPorTrecho(String trecho) {
 
         List<NinjaModel> ninjas = ninjaRepository.findByNomeContainingIgnoreCase(trecho);
 
-        return ninjas.stream()
-                .map(ninja -> {
-                    NinjaDTO dto = new NinjaDTO();
-
-                    dto.setNome(ninja.getNome());
-                    dto.setEmail(ninja.getEmail());
-                    dto.setIdade(ninja.getIdade());
-
-                    if(ninja.getMissao() != null){
-                        dto.setMissaoId(ninja.getMissao().getId());
-                    }
-
-                    return dto;
-                })
-                .toList();
+        return ninjas.stream().map(ninjaMapper::toDTO).toList();
     }
 
     public List<NinjaDTO> buscarNinjaPorMissao(Long missaoId){
