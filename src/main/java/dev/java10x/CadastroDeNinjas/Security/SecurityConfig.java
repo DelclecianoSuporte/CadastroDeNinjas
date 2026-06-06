@@ -23,7 +23,9 @@ public class SecurityConfig {
 
                         .requestMatchers(
                                 "/usuarios/**",
-                                "/auth/login"
+                                "/auth/login",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**"
                         ).permitAll()
 
                         // NINJAS
