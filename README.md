@@ -1,3 +1,3 @@
 ## Arquitetura da Solução
 
-![Arquitetura](docs/arquitetura.png)
+![Arquitetura](docs/arquitetura.drawio.png)
