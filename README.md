@@ -17,6 +17,10 @@ API REST desenvolvida com Spring Boot para gerenciamento de Ninjas e Missões, c
 
 ---
 
+## Casos de Uso
+
+![Use Case Diagram](docs/diagrama_api.png)
+
 ## Tecnologias Utilizadas
 
 - Java 17
