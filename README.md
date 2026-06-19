@@ -172,5 +172,3 @@ Você pode rodar a aplicação utilizando o **Docker** de forma isolada ou atrav
 **1. Gerar a imagem da aplicação:**
 ```bash
 docker build -t cadastro-ninjas-api .
-
----
