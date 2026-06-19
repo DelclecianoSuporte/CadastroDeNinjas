@@ -44,7 +44,7 @@ public class NinjaControllerIntegrationTest {
     @Test
     void deveRetornar403QuandoNaoAutenticado() throws Exception {
 
-        mockMvc.perform(get("/ninjas/1"))
+        mockMvc.perform(get("/ninjas/2"))
                 .andExpect(status().isForbidden());
     }
 
@@ -73,7 +73,7 @@ public class NinjaControllerIntegrationTest {
                 JsonPath.read(respostaLogin, "$.token");
 
         mockMvc.perform(
-                        get("/ninjas/1")
+                        get("/ninjas/2")
                                 .header("Authorization",
                                         "Bearer " + token)
                 )
@@ -162,7 +162,7 @@ public class NinjaControllerIntegrationTest {
         """;
 
         mockMvc.perform(
-                        put("/ninjas/1")
+                        put("/ninjas/2")
                                 .header("Authorization", "Bearer " + token)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(ninjaJson)
@@ -193,7 +193,7 @@ public class NinjaControllerIntegrationTest {
 
         String token = JsonPath.read(respostaLogin, "$.token");
 
-        mockMvc.perform(delete("/ninjas/1")
+        mockMvc.perform(delete("/ninjas/2")
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
     }
