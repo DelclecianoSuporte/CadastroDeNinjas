@@ -1,9 +1,13 @@
 package dev.java10x.CadastroDeNinjas.integration;
 
+import dev.java10x.CadastroDeNinjas.domain.model.UsuarioModel;
+import dev.java10x.CadastroDeNinjas.infra.repository.UsuarioRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import com.jayway.jsonpath.JsonPath;
 import org.springframework.http.MediaType;
@@ -19,11 +23,36 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("dev")
+@ActiveProfiles("test")
 public class NinjaControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @BeforeEach
+    void setUp() {
+        usuarioRepository.deleteAll();
+
+        UsuarioModel admin = new UsuarioModel();
+        admin.setUsername("adm");
+        admin.setPassword(passwordEncoder.encode("Eteste@10"));
+        admin.setRole("ADMIN");
+
+        usuarioRepository.save(admin);
+
+        UsuarioModel user = new UsuarioModel();
+        user.setUsername("del");
+        user.setPassword(passwordEncoder.encode("1234"));
+        user.setRole("USER");
+
+        usuarioRepository.save(user);
+    }
 
     @Test
     void deveRealizarLoginComSucesso() throws Exception {
