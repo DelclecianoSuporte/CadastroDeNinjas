@@ -11,6 +11,7 @@ public class NinjaMapper {
 
         NinjaDTO dto = new NinjaDTO();
 
+        dto.setId(ninja.getId());
         dto.setNome(ninja.getNome());
         dto.setEmail(ninja.getEmail());
         dto.setIdade(ninja.getIdade());

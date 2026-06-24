@@ -47,6 +47,7 @@ public class NinjaService {
         dto.setNome(ninjaSalvo.getNome());
         dto.setEmail(ninjaSalvo.getEmail());
         dto.setIdade(ninjaSalvo.getIdade());
+        dto.setId(ninjaSalvo.getId());
 
         if(ninjaSalvo.getMissao() != null){
             dto.setMissaoId(ninjaSalvo.getMissao().getId());

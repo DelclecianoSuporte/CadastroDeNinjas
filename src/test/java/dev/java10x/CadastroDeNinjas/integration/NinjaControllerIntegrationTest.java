@@ -15,9 +15,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("dev")
 public class NinjaControllerIntegrationTest {
 
     @Autowired
@@ -58,25 +60,39 @@ public class NinjaControllerIntegrationTest {
         }
         """;
 
-        MvcResult loginResult = mockMvc.perform(
-                        post("/auth/login")
+        MvcResult loginResult = mockMvc.perform(post("/auth/login")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(loginJson)
-                )
+                                .content(loginJson))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        String respostaLogin =
-                loginResult.getResponse().getContentAsString();
+        String respostaLogin = loginResult.getResponse().getContentAsString();
+        String token = JsonPath.read(respostaLogin, "$.token");
 
-        String token =
-                JsonPath.read(respostaLogin, "$.token");
+        // Cria um ninja com e-mail único para garantir um registro válido
+        String emailUnico = "consulta" + System.currentTimeMillis() + "@email.com";
 
-        mockMvc.perform(
-                        get("/ninjas/2")
-                                .header("Authorization",
-                                        "Bearer " + token)
-                )
+        String ninjaJson = """
+        {
+            "nome":"Ninja Consulta",
+            "email":"%s",
+            "idade":20
+        }
+        """.formatted(emailUnico);
+
+        MvcResult criacaoResult = mockMvc.perform(
+                        post("/ninjas")
+                                .header("Authorization", "Bearer " + token)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(ninjaJson))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String respostaCriacao = criacaoResult.getResponse().getContentAsString();
+        Object ninjaId = JsonPath.read(respostaCriacao, "$.id");
+
+        mockMvc.perform(get("/ninjas/" + ninjaId)
+                        .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
     }
 
@@ -132,12 +148,12 @@ public class NinjaControllerIntegrationTest {
     @Test
     public void deveAtualizarNinjaQuandoUsuarioForAdmin() throws Exception {
 
-    String loginJson = """
-    {
-        "username":"adm",
-        "password":"Eteste@10"
-    }
-    """;
+        String loginJson = """
+        {
+            "username":"adm",
+            "password":"Eteste@10"
+        }
+        """;
 
         MvcResult loginResult = mockMvc.perform(
                         post("/auth/login")
@@ -147,40 +163,57 @@ public class NinjaControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        String respostaLogin =
-                loginResult.getResponse().getContentAsString();
+        String respostaLogin = loginResult.getResponse().getContentAsString();
+        String token = JsonPath.read(respostaLogin, "$.token");
 
-        String token =
-                JsonPath.read(respostaLogin, "$.token");
+        // Cria um ninja com e-mail único para evitar conflito com execuções anteriores
+        String emailUnico = "naruto" + System.currentTimeMillis() + "@konoha.com";
 
-        String ninjaJson = """
+        String ninjaCriacaoJson = """
         {
-            "nome":"Naruto Atualizado",
-            "email":"naruto@konoha.com",
-            "idade":18
+            "nome":"Naruto",
+            "email":"%s",
+            "idade":17
         }
-        """;
+        """.formatted(emailUnico);
 
-        mockMvc.perform(
-                        put("/ninjas/2")
+        MvcResult criacaoResult = mockMvc.perform(post("/ninjas")
                                 .header("Authorization", "Bearer " + token)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(ninjaJson)
+                                .content(ninjaCriacaoJson)
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.nome")
-                        .value("Naruto Atualizado"));
+                .andReturn();
+
+        String respostaCriacao = criacaoResult.getResponse().getContentAsString();
+        Object ninjaId = JsonPath.read(respostaCriacao, "$.id");
+
+        // Atualiza o ninja recém-criado
+        String ninjaAtualizadoJson = """
+        {
+            "nome":"Naruto Atualizado",
+            "email":"%s",
+            "idade":18
+        }
+        """.formatted(emailUnico);
+
+        mockMvc.perform(put("/ninjas/" + ninjaId)
+                                .header("Authorization", "Bearer " + token)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(ninjaAtualizadoJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.nome").value("Naruto Atualizado"));
     }
 
     @Test
     public void deveDeletarNinjaQuandoUsuarioForAdmin() throws Exception {
 
-    String loginJson = """
-    {
-        "username":"adm",
-        "password":"Eteste@10"
-    }
-    """;
+        String loginJson = """
+        {
+            "username":"adm",
+            "password":"Eteste@10"
+        }
+        """;
 
         MvcResult loginResult = mockMvc.perform(
                         post("/auth/login")
@@ -193,8 +226,31 @@ public class NinjaControllerIntegrationTest {
 
         String token = JsonPath.read(respostaLogin, "$.token");
 
-        mockMvc.perform(delete("/ninjas/2")
-                .header("Authorization", "Bearer " + token))
+        // Cria um ninja com e-mail único para evitar conflito com execuções anteriores
+        String emailUnico = "deletar" + System.currentTimeMillis() + "@email.com";
+
+        String ninjaJson = """
+        {
+            "nome":"Ninja Para Deletar",
+            "email":"%s",
+            "idade":25
+        }
+        """.formatted(emailUnico);
+
+        MvcResult criacaoResult = mockMvc.perform(
+                        post("/ninjas")
+                                .header("Authorization", "Bearer " + token)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(ninjaJson))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String respostaCriacao = criacaoResult.getResponse().getContentAsString();
+
+        Object ninjaId = JsonPath.read(respostaCriacao, "$.id");
+
+        mockMvc.perform(delete("/ninjas/" + ninjaId)
+                        .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
     }
 
