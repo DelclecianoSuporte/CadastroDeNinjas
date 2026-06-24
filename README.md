@@ -36,6 +36,27 @@ API REST desenvolvida com Spring Boot para gerenciamento de Ninjas e Missões, c
 - Mockito
 - MockMvc
 - Maven
+- Docker
+- Docker Compose
+---
+
+## 🐋 Containerização
+
+A aplicação foi containerizada utilizando **Docker** e **Docker Compose** para garantir um ambiente de execução isolado, seguro e de fácil replicação.
+
+### 📄 Dockerfile
+Responsável por gerar uma imagem otimizada da API Spring Boot contendo:
+
+* **Java 17** como ambiente de execução (Runtime).
+* Aplicação empacotada em formato **JAR**.
+* Exposição da **porta 8080** para comunicação externa.
+
+### 🛠️ Docker Compose
+Responsável por gerenciar o ciclo de vida do container, encarregando-se de:
+
+* Construir a imagem da aplicação automaticamente.
+* Configurar as variáveis de ambiente necessárias para a API.
+* Executar a API em um ambiente containerizado robusto.
 
 ---
 
@@ -120,7 +141,6 @@ A documentação está disponível através do Swagger:
 ```text
 http://localhost:8080/swagger-ui/index.html
 ```
-
 ---
 
 ## Como Executar
@@ -143,4 +163,12 @@ cd CadastroDeNinjas
 mvn spring-boot:run
 ```
 
----
+## 🚀 Executando com Docker
+
+Você pode rodar a aplicação utilizando o **Docker** de forma isolada ou através do **Docker Compose** para maior praticidade.
+
+### 🐳 Utilizando Docker Puro
+
+**1. Gerar a imagem da aplicação:**
+```bash
+docker build -t cadastro-ninjas-api .
