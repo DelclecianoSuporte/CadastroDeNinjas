@@ -14,7 +14,7 @@ jobs:
 
     steps:
       - name: Checkout do código
-        uses: actions/actions/checkout@v4
+        uses: actions/checkout@v4
 
       - name: Configurar Java 17
         uses: actions/setup-java@v4
